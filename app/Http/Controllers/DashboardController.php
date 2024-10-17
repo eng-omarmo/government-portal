@@ -46,6 +46,6 @@ class DashboardController extends Controller
     protected function getNumberOfMerchants()
     {
         // Directly count the number of merchants.
-        return DB::table('merchants')->count();
+        return DB::table('user')->where('type', 'merchant')->count();
     }
 }
