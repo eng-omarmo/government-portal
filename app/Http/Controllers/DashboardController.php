@@ -25,10 +25,13 @@ class DashboardController extends Controller
     protected function recentTransactions()
     {
         return DB::table('merchant_payments')
-            ->latest('created_at')
+            ->leftJoin('users', 'merchant_payments.user_id', '=', 'users.id')
+            ->select('merchant_payments.*', 'users.first_name as name')
+            ->latest('merchant_payments.created_at') // Specify the table explicitly
             ->take(5)
             ->get();
     }
+
 
     protected function getAllMerchantPaymentsCount()
     {
