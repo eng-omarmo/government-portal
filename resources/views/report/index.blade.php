@@ -13,8 +13,8 @@
                     <input type="text" placeholder="Search..." class="p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 transition duration-150 ease-in-out">
 
                     <div class="relative">
-                        <select class="block appearance-none w-full border border-gray-300 text-gray-700 py-2 px-4 pr-8 rounded-md leading-tight focus:outline-none focus:ring-2 focus:ring-blue-500 transition duration-150 ease-in-out">
-                            <option value="">Filter by Status</option>
+                        <select class="w-full bg-white dark:bg-gray-800 placeholder:text-slate-400 text-slate-700 dark:text-gray-200 text-sm border border-slate-300 dark:border-gray-600 rounded pl-3 pr-8 py-2 transition duration-300 ease-in-out focus:outline-none focus:border-slate-400 hover:border-slate-400 shadow-sm focus:shadow-md appearance-none cursor-pointer bg-green-100">
+                            <option value="" disabled selected>Filter by Status</option>
                             <option value="completed">Completed</option>
                             <option value="pending">Pending</option>
                             <option value="failed">Failed</option>
