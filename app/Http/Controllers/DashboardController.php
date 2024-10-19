@@ -9,6 +9,7 @@ class DashboardController extends Controller
 {
     public function index()
     {
+
         $merchantPaymentCount = $this->getAllMerchantPaymentsCount();
         $recentTransactions = $this->recentTransactions();
         $vatRevenue = $this->calculateVatRevenue($merchantPaymentCount);
@@ -25,9 +26,21 @@ class DashboardController extends Controller
     protected function recentTransactions()
     {
         return DB::table('merchant_payments')
-            ->leftJoin('users', 'merchant_payments.user_id', '=', 'users.id')
-            ->select('merchant_payments.*', 'users.first_name as name')
-            ->latest('merchant_payments.created_at') // Specify the table explicitly
+            ->join('merchants', 'merchants.id', '=', 'merchant_payments.merchant_id')
+            ->leftJoin('users', 'users.id', '=', 'merchants.user_id')
+            ->select(
+                'merchant_payments.*',
+                'merchants.business_name as merchant_name,merchants.merchant_uuid as id',
+                DB::raw('
+                        CASE
+                            WHEN users.first_name IS NOT NULL
+                            THEN CONCAT(users.first_name, " ", users.last_name)
+                            ELSE merchant_payments.reference_number
+                        END as name
+                    ')
+
+            )
+            ->latest('merchant_payments.created_at')
             ->take(5)
             ->get();
     }
@@ -35,20 +48,24 @@ class DashboardController extends Controller
 
     protected function getAllMerchantPaymentsCount()
     {
-        // Get the count of all merchant payments without fetching the entire dataset.
-        return DB::table('merchant_payments')->count();
+        return DB::table('merchant_payments')
+            ->where('vat_charges', '>', '0')
+            ->whereDate('created_at', '>=', now()->toDateString())
+            ->count();
     }
 
     protected function calculateVatRevenue($merchantPaymentCount)
     {
         // Calculate VAT based on the count of merchant payments.
-        $currentVat = DB::table('vats')->value('amount'); // Using 'value' to fetch a single column.
-        return $merchantPaymentCount * $currentVat;
+        return DB::table('merchant_payments')->where('vat_charges', '>', '0')->whereDate('created_at', '>=', now()->toDateString())->sum('vat_charges');
     }
 
     protected function getNumberOfMerchants()
     {
         // Directly count the number of merchants.
-        return DB::table('users')->where('type', 'merchant')->count();
+        return DB::table('merchants')
+            ->where('vat', '>', '0')
+            ->distinct('user_id')
+            ->count('user_id');
     }
 }
