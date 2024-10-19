@@ -9,6 +9,7 @@ class DashboardController extends Controller
 {
     public function index()
     {
+
         $merchantPaymentCount = $this->getAllMerchantPaymentsCount();
         $recentTransactions = $this->recentTransactions();
         $vatRevenue = $this->calculateVatRevenue();
@@ -41,6 +42,7 @@ class DashboardController extends Controller
 
             )
             ->where('merchant_payments.vat_charges', '>', 0,)
+            ->whereDate('merchant_payments.created_at', '=', now()->toDateString())
             ->latest('merchant_payments.created_at')
             ->take(10)
             ->get();
@@ -50,21 +52,24 @@ class DashboardController extends Controller
     protected function getAllMerchantPaymentsCount()
     {
         return DB::table('merchant_payments')
-            ->where('vat_charges', '>', '0')
+            ->where('vat_charges', '>', 0)
+            ->whereDate('created_at', '=', now()->toDateString())
             ->count();
     }
+
 
     protected function calculateVatRevenue()
     {
         // Calculate VAT based on the count of merchant payments.
-        return DB::table('merchant_payments')->where('vat_charges', '>', '0')->whereDate('created_at', '>=', now()->toDateString())->sum('vat_charges');
+        return DB::table('merchant_payments')->where('vat_charges', '>', '0')->whereDate('created_at', '=', now()->toDateString())->sum('vat_charges');
     }
 
     protected function getNumberOfMerchants()
     {
         // Directly count the number of merchants.
-        return DB::table('merchants')
-            ->where('vat', '>', '0')
+        return DB::table('merchant_payments')
+            ->where('vat_charges', '>', '0')
+            ->whereDate('created_at', '=', now()->toDateString())
             ->distinct('user_id')
             ->count('user_id');
     }

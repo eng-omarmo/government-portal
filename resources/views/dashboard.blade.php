@@ -11,7 +11,7 @@
                 <!-- Total Number of Transactions Card -->
                 <div class="bg-white dark:bg-gray-800 overflow-hidden shadow-sm sm:rounded-lg transition-transform transform hover:scale-105 duration-300">
                     <div class="p-6 text-gray-900 dark:text-gray-100">
-                        <h3 class="text-lg font-semibold">Total Transactions</h3>
+                        <h3 class="text-lg font-semibold">Total Transactions Today</h3>
                         <p class="mt-4 text-3xl font-bold">{{ $merchantPaymentCount }}</p>
                     </div>
                 </div>
