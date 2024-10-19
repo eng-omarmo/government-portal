@@ -9,7 +9,6 @@ class DashboardController extends Controller
 {
     public function index()
     {
-
         $merchantPaymentCount = $this->getAllMerchantPaymentsCount();
         $recentTransactions = $this->recentTransactions();
         $vatRevenue = $this->calculateVatRevenue();
@@ -34,8 +33,8 @@ class DashboardController extends Controller
                 'merchants.merchant_uuid as merchant_number',
                 DB::raw('
                         CASE
-                            WHEN users.first_name IS NOT NULL
-                            THEN CONCAT(users.first_name, " ", users.last_name)
+                            WHEN users.formattedPhone IS NOT NULL
+                            THEN CONCAT(users.formattedPhone)
                             ELSE merchant_payments.reference_number
                         END as sender
                     ')
