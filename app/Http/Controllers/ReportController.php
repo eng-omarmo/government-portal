@@ -19,6 +19,7 @@ class ReportController extends Controller
         $status = $request['status'] ?? '';
         $currency = $request['currency'] ?? '';
         $transacrtionType = $request['type'] ?? '';
+        $data = [];
 
         if ($status !== '' || $currency !== '' || $transacrtionType !== '') {
             $data = DB::table('merchant_payments')
