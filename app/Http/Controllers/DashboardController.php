@@ -42,7 +42,6 @@ class DashboardController extends Controller
             )
             ->where('merchant_payments.vat_charges', '>', 0,)
             ->latest('merchant_payments.created_at')
-
             ->take(10)
             ->get();
     }
