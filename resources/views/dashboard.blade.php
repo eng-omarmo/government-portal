@@ -41,7 +41,6 @@
                         <thead class="bg-gray-50 dark:bg-gray-700 ">
                             <tr>
                                 <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase">Date</th>
-                                <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase">Reference NO</th>
                                 <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase">Sender</th>
                                 <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase">Receiver</th>
                                 <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase">Merchant</th>
@@ -55,10 +54,11 @@
                             @foreach($recentTransactions as $transaction)
                                 <tr class="hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors duration-150 ease-in-out">
                                     <td class="px-4 py-2 text-sm text-gray-900 dark:text-gray-100">{{ $transaction->created_at }}</td>
-                                    <td class="px-4 py-2 text-sm text-gray-900 dark:text-gray-100">{{ $transaction->name }}</td>
-                                    <td class="px-4 py-2 text-sm text-gray-900 dark:text-gray-100">{{ $transaction->name }}</td>
-                                    <td class="px-4 py-2 text-sm text-gray-900 dark:text-gray-100">{{ $transaction->uuid }}</td>
-                                    <td class="px-4 py-2 text-sm text-gray-900 dark:text-gray-100">{{ $transaction->merchant_id }}</td>
+                                    <td class="px-4 py-2 text-sm text-gray-900 dark:text-gray-100">{{ $transaction->sender }}</td>
+                                    <td class="px-4 py-2 text-sm text-gray-900 dark:text-gray-100">{{ $transaction->merchant_name }}</td>
+
+
+                                    <td class="px-4 py-2 text-sm text-gray-900 dark:text-gray-100">{{ $transaction->merchant_number }}</td>
                                     <td class="px-4 py-2 text-sm text-gray-900 dark:text-gray-100">{{ $transaction->amount }}</td>
                                     <td class="px-4 py-2 text-sm text-gray-900 dark:text-gray-100">{{ $transaction->total }}</td>
                                     <td class="px-4 py-2 text-sm text-gray-900 dark:text-gray-100">{{ $transaction->status }}</td>
