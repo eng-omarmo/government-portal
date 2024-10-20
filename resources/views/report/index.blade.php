@@ -53,6 +53,12 @@
                             <button type="submit" class="px-4 py-2 bg-blue-600 text-white rounded-md shadow hover:bg-blue-700 transition duration-150 ease-in-out">
                                 Apply Filter
                             </button>
+                         <!-- Replace the Export Button -->
+<button type="button" onclick="exportCSV()" class="px-4 py-2 bg-blue-600 text-white rounded-md shadow hover:bg-blue-700 transition duration-150 ease-in-out">
+    Export CSV
+</button>
+
+                            <input type="hidden" name="export" value="false">
                         </div>
                     </form>
                 </div>
@@ -106,5 +112,10 @@
                 endDate: moment().endOf('month')
             });
         });
+
+        function exportCSV() {
+        $('input[name="export"]').val('true');
+        $('#filter-form').submit();
+    }
     </script>
 </x-app-layout>

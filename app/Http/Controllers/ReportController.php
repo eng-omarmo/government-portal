@@ -4,13 +4,18 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Response;
 
 class ReportController extends Controller
 {
     public function index(Request $request)
     {
+        if ($request->has('export') && $request->export === 'true') {
+            return $this->exportToCsv($request);
+        }
+
         return view('report.index', [
-            'transactions' => $this->FetchMerchantTransaction($request),
+            'transactions' => $this->FetchMerchantTransaction($request)->paginate(10),
             'currencies' => $this->getCurrencies(),
             'statuses' => $this->getStatus(),
             'cashiers' => $this->getMerchantUuid()
@@ -35,13 +40,12 @@ class ReportController extends Controller
                 ')
             );
 
-
         if ($request->filled('date_range')) {
             $dates = explode(' - ', $request->date_range);
             $query->whereBetween('merchant_payments.created_at', [$dates[0], $dates[1]]);
         }
 
-        if($request->filled('cashier')){
+        if ($request->filled('cashier')) {
             $query->where('merchant_payments.merchant_id', $request->cashier);
         }
 
@@ -55,13 +59,54 @@ class ReportController extends Controller
 
         $query->where('merchant_payments.vat_charges', '>', 0);
 
-        return $query->paginate(10);
+        return $query;
     }
+
+    protected function exportToCsv($request)
+    {
+        $transactions = $this->FetchMerchantTransaction($request)->get();
+        $filename = 'transactions_export_' . now()->format('Ymd_His') . '.csv';
+        $headers = [
+            'Content-Type' => 'text/csv',
+            'Content-Disposition' => "attachment; filename=\"$filename\"",
+        ];
+        $columns = [
+            'ID',
+            'Merchant Name',
+            'Merchant Number',
+            'Amount',
+            'Status',
+            'Sender',
+            'VAT Charges',
+            'Date'
+        ];
+        $callback = function () use ($transactions, $columns) {
+            $file = fopen('php://output', 'w');
+            fputcsv($file, $columns);
+            foreach ($transactions as $transaction) {
+                fputcsv($file, [
+                    $transaction->id,
+                    $transaction->merchant_name,
+                    $transaction->merchant_number,
+                    $transaction->amount.' '.$this->getCurrenyName($transaction->currency_id),
+                    $transaction->status,
+                    $transaction->sender,
+                    $transaction->vat_charges,
+                    $transaction->created_at,
+                ]);
+            }
+            fclose($file);
+        };
+
+        return response()->stream($callback, 200, $headers);
+    }
+
     function getCurrencies()
     {
         $currencyIds = DB::table('merchant_payments')->distinct('currency_id')->pluck('currency_id');
         return DB::table('currencies')->whereIn('id', $currencyIds)->select('id', 'name')->get();
     }
+
     function getStatus()
     {
         return DB::table('merchant_payments')->distinct('status')->pluck('status');
@@ -69,8 +114,11 @@ class ReportController extends Controller
 
     function getMerchantUuid()
     {
-        $merchantIds= DB::table('merchant_payments')->distinct('merchant_id')->pluck('merchant_id');
+        $merchantIds = DB::table('merchant_payments')->distinct('merchant_id')->pluck('merchant_id');
         return DB::table('merchants')->whereIn('id', $merchantIds)->select('id', 'merchant_uuid', 'business_name')->get();
+    }
 
+    function getCurrenyName($id){
+        return DB::table('currencies')->where('id', $id)->value('name');
     }
 }
