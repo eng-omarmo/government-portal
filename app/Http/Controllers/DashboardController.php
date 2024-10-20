@@ -61,7 +61,9 @@ class DashboardController extends Controller
     protected function calculateVatRevenue()
     {
         // Calculate VAT based on the count of merchant payments.
-        return DB::table('merchant_payments')->where('vat_charges', '>', '0')->whereDate('created_at', '=', now()->toDateString())->sum('vat_charges');
+        return DB::table('merchant_payments')->where('vat_charges', '>', '0')
+        ->whereDate('created_at', '=', now()->toDateString())
+        ->sum('vat_charges');
     }
 
     protected function getNumberOfMerchants()
