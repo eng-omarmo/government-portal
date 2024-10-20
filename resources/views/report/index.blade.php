@@ -54,7 +54,7 @@
                                 Apply Filter
                             </button>
                          <!-- Replace the Export Button -->
-<button type="button" onclick="exportCSV()" class="px-4 py-2 bg-blue-600 text-white rounded-md shadow hover:bg-blue-700 transition duration-150 ease-in-out">
+<button type="button" onclick="exportCSV()" class="px-4 py-2 bg-green-500 text-white rounded-md shadow hover:bg-green-700 transition duration-150 ease-in-out">
     Export CSV
 </button>
 
