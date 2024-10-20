@@ -9,11 +9,11 @@ class ReportController extends Controller
 {
     public function index(Request $request)
     {
-
         return view('report.index', [
             'transactions' => $this->FetchMerchantTransaction($request),
             'currencies' => $this->getCurrencies(),
             'statuses' => $this->getStatus(),
+            'cashiers' => $this->getMerchantUuid()
         ]);
     }
 
@@ -41,6 +41,10 @@ class ReportController extends Controller
             $query->whereBetween('merchant_payments.created_at', [$dates[0], $dates[1]]);
         }
 
+        if($request->filled('cashier')){
+            $query->where('merchant_payments.merchant_id', $request->cashier);
+        }
+
         if ($request->filled('status')) {
             $query->where('merchant_payments.status', $request->status);
         }
@@ -61,5 +65,12 @@ class ReportController extends Controller
     function getStatus()
     {
         return DB::table('merchant_payments')->distinct('status')->pluck('status');
+    }
+
+    function getMerchantUuid()
+    {
+        $merchantIds= DB::table('merchant_payments')->distinct('merchant_id')->pluck('merchant_id');
+        return DB::table('merchants')->whereIn('id', $merchantIds)->select('id', 'merchant_uuid', 'business_name')->get();
+
     }
 }

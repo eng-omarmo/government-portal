@@ -32,6 +32,14 @@
                                     @endforeach
                                 </select>
                             </div>
+                            <div class="relative">
+                                <select name="cashier" class="w-full bg-white dark:bg-gray-800 placeholder:text-slate-400 text-slate-700 dark:text-gray-200 text-sm border border-slate-300 dark:border-gray-600 rounded pl-3 pr-8 py-2 transition duration-300 ease-in-out focus:outline-none focus:border-slate-400 hover:border-slate-400 shadow-sm focus:shadow-md appearance-none cursor-pointer">
+                                    <option value="">All Cashiers</option>
+                                    @foreach($cashiers as $cashier)
+                                        <option value="{{ $cashier->id }}">{{ $cashier->business_name }} - {{ $cashier->merchant_uuid  }}</option>
+                                    @endforeach
+                                </select>
+                            </div>
 
                             <div class="relative">
                                 <select name="currency" class="w-full bg-white dark:bg-gray-800 placeholder:text-slate-400 text-slate-700 dark:text-gray-200 text-sm border border-slate-300 dark:border-gray-600 rounded pl-3 pr-8 py-2 transition duration-300 ease-in-out focus:outline-none focus:border-slate-400 hover:border-slate-400 shadow-sm focus:shadow-md appearance-none cursor-pointer">
