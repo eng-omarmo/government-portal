@@ -8,9 +8,9 @@ use Illuminate\Support\Facades\Response;
 
 class ReportController extends Controller
 {
-    public function index(Request $request)
-    {
-        if ($request->has('export') && $request->export === 'true') {
+    public function index(Request $request){
+
+        if ($request->filled('export') && $request->export == 1) {
             return $this->exportToCsv($request);
         }
 
@@ -88,7 +88,7 @@ class ReportController extends Controller
                     $transaction->id,
                     $transaction->merchant_name,
                     $transaction->merchant_number,
-                    $transaction->amount.' '.$this->getCurrenyName($transaction->currency_id),
+                    $transaction->amount . ' ' . $this->getCurrenyName($transaction->currency_id),
                     $transaction->status,
                     $transaction->sender,
                     $transaction->vat_charges,
@@ -103,22 +103,29 @@ class ReportController extends Controller
 
     function getCurrencies()
     {
-        $currencyIds = DB::table('merchant_payments')->distinct('currency_id')->pluck('currency_id');
-        return DB::table('currencies')->whereIn('id', $currencyIds)->select('id', 'name')->get();
+        $currencyIds = DB::table('merchant_payments')
+            ->distinct('currency_id')
+            ->pluck('currency_id');
+        return DB::table('currencies')
+            ->whereIn('id', $currencyIds)->select('id', 'name')->get();
     }
 
     function getStatus()
     {
-        return DB::table('merchant_payments')->distinct('status')->pluck('status');
+        return DB::table('merchant_payments')
+            ->distinct('status')
+            ->pluck('status');
     }
 
     function getMerchantUuid()
     {
         $merchantIds = DB::table('merchant_payments')->distinct('merchant_id')->pluck('merchant_id');
-        return DB::table('merchants')->whereIn('id', $merchantIds)->select('id', 'merchant_uuid', 'business_name')->get();
+        return DB::table('merchants')->whereIn('id', $merchantIds)->select('id', 'merchant_uuid', 'business_name')
+            ->get();
     }
 
-    function getCurrenyName($id){
+    function getCurrenyName($id)
+    {
         return DB::table('currencies')->where('id', $id)->value('name');
     }
 }
