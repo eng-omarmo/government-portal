@@ -7,10 +7,23 @@
 
     <div class="py-12">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 space-y-4">
+            <!-- Summary Card -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                <div class="bg-yellow-100 dark:bg-gray-800 p-6 shadow rounded-lg transition-transform transform hover:scale-105 duration-300">
+                    <h3 class="text-lg font-semibold text-yellow-800 dark:text-gray-100">Total Transactions</h3>
+                    <p class="mt-2 text-3xl font-bold text-yellow-900 dark:text-gray-100">{{ $filteredTransactionCount }}</p>
+                </div>
+                <div class="bg-blue-100 dark:bg-gray-800 p-6 shadow rounded-lg transition-transform transform hover:scale-105 duration-300">
+                    <h3 class="text-lg font-semibold text-blue-800 dark:text-gray-100">Total VAT</h3>
+                    <p class="mt-2 text-3xl font-bold text-blue-900 dark:text-gray-100">{{ $filteredVatTotal }} USD</p>
+                </div>
+            </div>
+
+            <!-- Transaction Report Section -->
             <div x-data="{ showFilter: false }" class="p-6 bg-white dark:bg-gray-800 shadow rounded-lg">
                 <h3 class="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-2">Transaction Report</h3>
 
-                <div class='flex flex-wrap justify-between items-center mb-2'>
+                <div class="flex flex-wrap justify-between items-center mb-2">
                     <!-- Show/Hide Filter Button -->
                     <button @click="showFilter = !showFilter"
                             x-text="showFilter ? 'Hide Filter' : 'Show Filter'"
@@ -71,7 +84,7 @@
                                     <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase">Sender</th>
                                     <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase">Receiver</th>
                                     <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase">Amount</th>
-                                    <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase">Vat Charges</th>
+                                    <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase">VAT Charges</th>
                                     <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase">Status</th>
                                 </tr>
                             </thead>

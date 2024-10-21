@@ -9,13 +9,16 @@ use Illuminate\Support\Facades\Response;
 class ReportController extends Controller
 {
     public function index(Request $request){
-
+        $totalNumberofTransactions = $this->FetchMerchantTransaction($request)->count();
+        $totalVatCharges = $this->FetchMerchantTransaction($request)->sum('vat_charges');
         if ($request->filled('export') && $request->export == 1) {
             return $this->exportToCsv($request);
         }
 
         return view('report.index', [
             'transactions' => $this->FetchMerchantTransaction($request)->paginate(10),
+            'filteredTransactionCount' => $totalNumberofTransactions,
+            'filteredVatTotal' => $totalVatCharges,
             'currencies' => $this->getCurrencies(),
             'statuses' => $this->getStatus(),
             'cashiers' => $this->getMerchantUuid()
