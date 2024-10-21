@@ -46,8 +46,8 @@
                                 </select>
                             </div>
 
-                            <div class="relative">
-                                <select name="cashier" class="w-full bg-white dark:bg-gray-800 text-slate-700 dark:text-gray-200 text-sm border border-slate-300 dark:border-gray-600 rounded pl-3 pr-8 py-2 transition duration-150 focus:outline-none shadow-sm">
+                            <div class="relative w-full sm:w-64">
+                                <select id="cashier-select" name="cashier" class="block w-full bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-200 text-sm rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 transition duration-150 ease-in-out">
                                     <option value="">All Cashiers</option>
                                     @foreach($cashiers as $cashier)
                                         <option value="{{ $cashier->id }}">{{ $cashier->business_name }} - {{ $cashier->merchant_uuid }}</option>
@@ -114,8 +114,21 @@
         </div>
     </div>
 
+    <!-- Select2 and Date Range Picker CSS & JS -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/css/select2.min.css" rel="stylesheet" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/js/select2.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.min.js"></script>
+    <link href="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.css" rel="stylesheet" />
+
     <script>
-        $(function() {
+        $(document).ready(function() {
+            $('#cashier-select').select2({
+                placeholder: 'Select a cashier',
+                allowClear: true,
+                width: '100%'
+            });
+
             $('#date-range').daterangepicker({
                 locale: {
                     format: 'YYYY-MM-DD'
@@ -129,6 +142,7 @@
             document.getElementById('export').value = 1;
             document.getElementById('filter-form').submit();
         }
+
         function filter() {
             document.getElementById('export').value = 0;
             document.getElementById('filter-form').submit();
