@@ -8,13 +8,13 @@ use Illuminate\Support\Facades\Response;
 
 class ReportController extends Controller
 {
-    public function index(Request $request){
+    public function index(Request $request)
+    {
         $totalNumberofTransactions = $this->FetchMerchantTransaction($request)->count();
         $totalVatCharges = $this->FetchMerchantTransaction($request)->sum('vat_charges');
         if ($request->filled('export') && $request->export == 1) {
             return $this->exportToCsv($request);
         }
-
         return view('report.index', [
             'transactions' => $this->FetchMerchantTransaction($request)->paginate(10),
             'filteredTransactionCount' => $totalNumberofTransactions,
@@ -75,8 +75,7 @@ class ReportController extends Controller
         ];
         $columns = [
             'ID',
-            'Merchant Name',
-            'Merchant Number',
+            'Merchant',
             'Amount',
             'Status',
             'Sender',
@@ -88,9 +87,8 @@ class ReportController extends Controller
             fputcsv($file, $columns);
             foreach ($transactions as $transaction) {
                 fputcsv($file, [
-                    $transaction->id,
-                    $transaction->merchant_name,
-                    $transaction->merchant_number,
+                    $transaction->uuid,
+                    $transaction->merchant_name.' - '.$transaction->merchant_number,
                     $transaction->amount . ' ' . $this->getCurrenyName($transaction->currency_id),
                     $transaction->status,
                     $transaction->sender,
