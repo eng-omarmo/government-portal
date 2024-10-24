@@ -50,7 +50,7 @@
                                 <select id="cashier-select" name="cashier" class="block w-full bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-200 text-sm rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 transition duration-150 ease-in-out">
                                     <option value="">All Cashiers</option>
                                     @foreach($cashiers as $cashier)
-                                        <option value="{{ $cashier->id }}">{{ $cashier->business_name }} - {{ $cashier->merchant_uuid }}</option>
+                                        <option value="{{ $cashier->id }}">{{ $cashier->first_name . ' ' . $cashier->last_name }}</option>
                                     @endforeach
                                 </select>
                             </div>
@@ -80,6 +80,7 @@
                         <table class="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
                             <thead class="bg-gray-50 dark:bg-gray-700">
                                 <tr>
+                                    <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase">ID</th>
                                     <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase">Date</th>
                                     <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase">Sender</th>
                                     <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase">Receiver</th>
@@ -91,6 +92,7 @@
                             <tbody class="divide-y divide-gray-200 dark:divide-gray-700">
                                 @foreach($transactions as $transaction)
                                     <tr class="hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors duration-150 ease-in-out">
+                                        <td class="px-4 py-2 text-sm text-gray-900 dark:text-gray-100">{{ $transaction->uuid }}</td>
                                         <td class="px-4 py-2 text-sm text-gray-900 dark:text-gray-100">{{ $transaction->created_at }}</td>
                                         <td class="px-4 py-2 text-sm text-gray-900 dark:text-gray-100">{{ $transaction->sender }}</td>
                                         <td class="px-4 py-2 text-sm text-gray-900 dark:text-gray-100">{{ $transaction->merchant_name .' - '.$transaction->merchant_number }}</td>

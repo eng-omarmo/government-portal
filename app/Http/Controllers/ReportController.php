@@ -10,6 +10,8 @@ class ReportController extends Controller
 {
     public function index(Request $request)
     {
+
+
         $totalNumberofTransactions = $this->FetchMerchantTransaction($request)->count();
         $totalVatCharges = $this->FetchMerchantTransaction($request)->sum('vat_charges');
         if ($request->filled('export') && $request->export == 1) {
@@ -120,10 +122,18 @@ class ReportController extends Controller
 
     function getMerchantUuid()
     {
-        $merchantIds = DB::table('merchant_payments')->distinct('merchant_id')->pluck('merchant_id');
-        return DB::table('merchants')->whereIn('id', $merchantIds)->select('id', 'merchant_uuid', 'business_name')
+
+        $merchantIds = DB::table('merchant_payments')
+            ->distinct()
+            ->pluck('merchant_id');
+        return DB::table('merchants')
+            ->whereIn('merchants.id', $merchantIds)
+            ->join('users', 'users.id', '=', 'merchants.user_id')
+            ->select('merchants.*', 'users.first_name', 'users.last_name')
+            ->orderBy('users.first_name', 'asc')
             ->get();
     }
+
 
     function getCurrenyName($id)
     {
