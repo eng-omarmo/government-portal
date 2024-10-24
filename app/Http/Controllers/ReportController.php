@@ -137,7 +137,6 @@ class ReportController extends Controller
 
         $merchants = [];
         foreach ($usersInfo as $user) {
-
             $merchant = DB::table('merchants')->where('user_id', $user->id)->first();
             if ($merchant) {
                 $merchants[] = [
