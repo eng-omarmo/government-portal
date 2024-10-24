@@ -11,7 +11,6 @@ class ReportController extends Controller
     public function index(Request $request)
     {
 
-
         $totalNumberofTransactions = $this->FetchMerchantTransaction($request)->count();
         $totalVatCharges = $this->FetchMerchantTransaction($request)->sum('vat_charges');
         if ($request->filled('export') && $request->export == 1) {
@@ -90,7 +89,7 @@ class ReportController extends Controller
             foreach ($transactions as $transaction) {
                 fputcsv($file, [
                     $transaction->uuid,
-                    $transaction->merchant_name.' - '.$transaction->merchant_number,
+                    $transaction->merchant_name . ' - ' . $transaction->merchant_number,
                     $transaction->amount . ' ' . $this->getCurrenyName($transaction->currency_id),
                     $transaction->status,
                     $transaction->sender,
@@ -122,17 +121,38 @@ class ReportController extends Controller
 
     function getMerchantUuid()
     {
-
         $merchantIds = DB::table('merchant_payments')
             ->distinct()
             ->pluck('merchant_id');
-        return DB::table('merchants')
-            ->whereIn('merchants.id', $merchantIds)
-            ->join('users', 'users.id', '=', 'merchants.user_id')
-            ->select('merchants.*', 'users.first_name', 'users.last_name')
-            ->orderBy('users.first_name', 'asc')
+
+        $users_ids = DB::table('merchants')
+            ->whereIn('id', $merchantIds)
+            ->distinct()
+            ->pluck('user_id');
+
+        $usersInfo = DB::table('users')
+            ->whereIn('id', $users_ids)
+            ->select('id', 'first_name', 'last_name')
             ->get();
+
+        $merchants = [];
+        foreach ($usersInfo as $user) {
+
+            $merchant = DB::table('merchants')->where('user_id', $user->id)->first();
+            if ($merchant) {
+                $merchants[] = [
+                    'id' => $merchant->id,
+                    'name' => $user->first_name . ' ' . $user->last_name,  // Full name for display
+                ];
+            }
+        }
+
+        return $merchants;
     }
+
+
+
+
 
 
     function getCurrenyName($id)

@@ -49,8 +49,10 @@
                             <div class="relative w-full sm:w-64">
                                 <select id="cashier-select" name="cashier" class="block w-full bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-200 text-sm rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 transition duration-150 ease-in-out">
                                     <option value="">All Cashiers</option>
-                                    @foreach($cashiers as $cashier)
-                                        <option value="{{ $cashier->id }}">{{ $cashier->first_name . ' ' . $cashier->last_name }}</option>
+                                    @vardump($cashiers)
+                                    @foreach($cashiers as $merchant)
+
+                                        <option value="{{ $merchant['id'] }}">{{ $merchant['name'] }}</option>
                                     @endforeach
                                 </select>
                             </div>
