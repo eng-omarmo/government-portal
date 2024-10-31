@@ -4,20 +4,28 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Response;
 
 class ReportController extends Controller
 {
     public function index(Request $request)
     {
-
-        $totalNumberofTransactions = $this->FetchMerchantTransaction($request)->count();
-        $totalVatCharges = $this->FetchMerchantTransaction($request)->sum('vat_charges');
+        $merchantCode = env('MERCHANT_CODE');
+        Log::info($merchantCode);
+        $merchant = DB::table('merchants')->where('merchant_uuid', $merchantCode)->first();
+        if (!$merchant || empty($merchant)) {
+            $title = 'Merchant not found';
+            $message = 'Please contact somxchange techical sopport team to resolve this issue';
+            return view('report.404', compact('title', 'message'));
+        }
+        $totalNumberofTransactions = $this->FetchMerchantTransaction($request)->where('merchant_id', $merchant->merchant_id)->count();
+        $totalVatCharges = $this->FetchMerchantTransaction($request)->where('merchant_id', $merchant->merchant_id)->sum('vat_charges');
         if ($request->filled('export') && $request->export == 1) {
             return $this->exportToCsv($request);
         }
         return view('report.index', [
-            'transactions' => $this->FetchMerchantTransaction($request)->paginate(10),
+            'transactions' => $this->FetchMerchantTransaction($request)->where('merchant_id', $merchant->merchant_id)->paginate(10),
             'filteredTransactionCount' => $totalNumberofTransactions,
             'filteredVatTotal' => $totalVatCharges,
             'currencies' => $this->getCurrencies(),
@@ -68,6 +76,7 @@ class ReportController extends Controller
 
     protected function exportToCsv($request)
     {
+
         $transactions = $this->FetchMerchantTransaction($request)->get();
         $filename = 'transactions_export_' . now()->format('Ymd_His') . '.csv';
         $headers = [
@@ -127,6 +136,7 @@ class ReportController extends Controller
 
         $users_ids = DB::table('merchants')
             ->whereIn('id', $merchantIds)
+            ->where('vat' > 0)
             ->distinct()
             ->pluck('user_id');
 
@@ -148,9 +158,6 @@ class ReportController extends Controller
 
         return $merchants;
     }
-
-
-
 
 
 
