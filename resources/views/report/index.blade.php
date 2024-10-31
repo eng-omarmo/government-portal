@@ -89,6 +89,7 @@
                                     <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase">Amount</th>
                                     <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase">VAT Charges</th>
                                     <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase">Status</th>
+                                    <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase">Balance</th>
                                 </tr>
                             </thead>
                             <tbody class="divide-y divide-gray-200 dark:divide-gray-700">
@@ -101,6 +102,7 @@
                                         <td class="px-4 py-2 text-sm text-gray-900 dark:text-gray-100">{{ $transaction->total }}</td>
                                         <td class="px-4 py-2 text-sm text-gray-900 dark:text-gray-100">{{ $transaction->vat_charges }}</td>
                                         <td class="px-4 py-2 text-sm text-gray-900 dark:text-gray-100">{{ $transaction->status }}</td>
+                                        <td class="px-4 py-2 text-sm text-gray-900 dark:text-gray-100">{{ $transaction->balance }}</td>
                                     </tr>
                                 @endforeach
                             </tbody>
