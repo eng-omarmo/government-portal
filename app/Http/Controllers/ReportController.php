@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Controllers\Service\merchantCodeService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
@@ -9,11 +10,13 @@ use Illuminate\Support\Facades\Response;
 
 class ReportController extends Controller
 {
+    public $merchantCodeService;
+    public function __construct(merchantCodeService $merchantCodeService) {
+        $this->merchantCodeService = $merchantCodeService;
+    }
     public function index(Request $request)
     {
-        $merchantCode = env('MERCHANT_CODE');
-        Log::info($merchantCode);
-        $merchant = DB::table('merchants')->where('merchant_uuid', $merchantCode)->first();
+        $merchant = $this->merchantCodeService->getMerchantCode();
         if (!$merchant || empty($merchant)) {
             $title = 'Merchant not found';
             $message = 'Please contact somxchange techical sopport team to resolve this issue';

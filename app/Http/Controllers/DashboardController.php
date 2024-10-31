@@ -2,11 +2,16 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Controllers\Service\merchantCodeService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
 class DashboardController extends Controller
 {
+    public $merchantCodeService;
+    public function __construct(merchantCodeService $merchantCodeService) {
+      $this->merchantCodeService = $merchantCodeService;
+    }
     public function index()
     {
 
