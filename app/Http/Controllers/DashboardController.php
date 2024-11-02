@@ -14,7 +14,6 @@ class DashboardController extends Controller
     }
     public function index()
     {
-
         $merchantPaymentCount = $this->getAllMerchantPaymentsCount();
         $recentTransactions = $this->recentTransactions();
         $vatRevenue = $this->calculateVatRevenue();
@@ -30,6 +29,7 @@ class DashboardController extends Controller
 
     protected function recentTransactions()
     {
+
         return DB::table('merchant_payments')
             ->join('merchants', 'merchants.id', '=', 'merchant_payments.merchant_id')
             ->leftJoin('users', 'users.id', '=', 'merchant_payments.user_id')
@@ -50,6 +50,7 @@ class DashboardController extends Controller
             ->whereDate('merchant_payments.created_at', '=', now()->toDateString())
             ->latest('merchant_payments.created_at')
             ->take(10)
+            ->where('merchant_payments.merchant_id', $this->returnMerchantCode()->id)
             ->get();
     }
 
@@ -57,7 +58,7 @@ class DashboardController extends Controller
     protected function getAllMerchantPaymentsCount()
     {
         return DB::table('merchant_payments')
-            ->where('vat_charges', '>', 0)
+            ->where('merchant_id', $this->returnMerchantCode()->id)
             ->whereDate('created_at', '=', now()->toDateString())
             ->count();
     }
@@ -65,19 +66,30 @@ class DashboardController extends Controller
 
     protected function calculateVatRevenue()
     {
-        // Calculate VAT based on the count of merchant payments.
-        return DB::table('merchant_payments')->where('vat_charges', '>', '0')
+        return DB::table('merchant_payments')
+        ->where('merchant_id', $this->returnMerchantCode()->id)
         ->whereDate('created_at', '=', now()->toDateString())
-        ->sum('vat_charges');
+        ->sum('amount');
     }
 
     protected function getNumberOfMerchants()
     {
-        // Directly count the number of merchants.
         return DB::table('merchant_payments')
             ->where('vat_charges', '>', '0')
             ->whereDate('created_at', '=', now()->toDateString())
             ->distinct('user_id')
             ->count('user_id');
+    }
+
+    function returnMerchantCode() {
+        $merchantCodeService = new merchantCodeService();
+        $merchant = $merchantCodeService->getMerchantCode();
+
+        if (!$merchant || empty($merchant)) {
+            $title = 'Merchant not found';
+            $message = 'Please contact somxchange techical sopport team to resolve this issue ' . env('TechicalSopportNumber');
+            return view('report.404', compact('title', 'message'));
+        }
+        return $merchant;
     }
 }
