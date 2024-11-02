@@ -11,7 +11,8 @@ use Illuminate\Support\Facades\Response;
 class ReportController extends Controller
 {
     public $merchantCodeService;
-    public function __construct(merchantCodeService $merchantCodeService) {
+    public function __construct(merchantCodeService $merchantCodeService)
+    {
         $this->merchantCodeService = $merchantCodeService;
     }
     public function index(Request $request)
@@ -19,7 +20,7 @@ class ReportController extends Controller
         $merchant = $this->merchantCodeService->getMerchantCode();
         if (!$merchant || empty($merchant)) {
             $title = 'Merchant not found';
-            $message = 'Please contact somxchange techical sopport team to resolve this issue';
+            $message = 'Please contact somxchange techical sopport team to resolve this issue [+252 770835017]';
             return view('report.404', compact('title', 'message'));
         }
         $totalNumberofTransactions = $this->FetchMerchantTransaction($request)->where('merchant_id', $merchant->merchant_id)->count();
@@ -79,8 +80,15 @@ class ReportController extends Controller
 
     protected function exportToCsv($request)
     {
+        $merchant = $this->merchantCodeService->getMerchantCode();
 
-        $transactions = $this->FetchMerchantTransaction($request)->get();
+        if (!$merchant || empty($merchant)) {
+            $title = 'Merchant not found';
+            $message = 'Please contact somxchange techical sopport team to resolve this issue [+252 770835017]';
+            return view('report.404', compact('title', 'message'));
+        }
+
+        $transactions = $this->FetchMerchantTransaction($request)->where('merchant_id', $merchant->merchant_id)->get();
         $filename = 'transactions_export_' . now()->format('Ymd_His') . '.csv';
         $headers = [
             'Content-Type' => 'text/csv',
