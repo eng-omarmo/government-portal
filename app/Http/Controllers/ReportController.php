@@ -18,18 +18,20 @@ class ReportController extends Controller
     public function index(Request $request)
     {
         $merchant = $this->merchantCodeService->getMerchantCode();
+
         if (!$merchant || empty($merchant)) {
             $title = 'Merchant not found';
-            $message = 'Please contact somxchange techical sopport team to resolve this issue [+252 770835017]';
+            $message = 'Please contact somxchange techical sopport team to resolve this issue ' . env('TechicalSopportNumber');
             return view('report.404', compact('title', 'message'));
         }
-        $totalNumberofTransactions = $this->FetchMerchantTransaction($request)->where('merchant_id', $merchant->merchant_id)->count();
-        $totalVatCharges = $this->FetchMerchantTransaction($request)->where('merchant_id', $merchant->merchant_id)->sum('vat_charges');
+        $totalNumberofTransactions = $this->FetchMerchantTransaction($request)->where('merchant_id', $merchant->id)->count();
+        $totalVatCharges = $this->FetchMerchantTransaction($request)
+            ->where('merchant_id', $merchant->id)->sum('amount');
         if ($request->filled('export') && $request->export == 1) {
             return $this->exportToCsv($request);
         }
         return view('report.index', [
-            'transactions' => $this->FetchMerchantTransaction($request)->where('merchant_id', $merchant->merchant_id)->paginate(10),
+            'transactions' => $this->FetchMerchantTransaction($request)->where('merchant_id', $merchant->id)->paginate(10),
             'filteredTransactionCount' => $totalNumberofTransactions,
             'filteredVatTotal' => $totalVatCharges,
             'currencies' => $this->getCurrencies(),
@@ -88,7 +90,7 @@ class ReportController extends Controller
             return view('report.404', compact('title', 'message'));
         }
 
-        $transactions = $this->FetchMerchantTransaction($request)->where('merchant_id', $merchant->merchant_id)->get();
+        $transactions = $this->FetchMerchantTransaction($request)->where('merchant_id', $merchant->id)->get();
         $filename = 'transactions_export_' . now()->format('Ymd_His') . '.csv';
         $headers = [
             'Content-Type' => 'text/csv',
@@ -145,9 +147,9 @@ class ReportController extends Controller
             ->distinct()
             ->pluck('merchant_id');
 
-        $users_ids = DB::table('merchants')
+            $users_ids = DB::table('merchants')
             ->whereIn('id', $merchantIds)
-            ->where('vat' > 0)
+            ->where('vat', '>', 0) // Corrected the syntax here
             ->distinct()
             ->pluck('user_id');
 
@@ -162,15 +164,13 @@ class ReportController extends Controller
             if ($merchant) {
                 $merchants[] = [
                     'id' => $merchant->id,
-                    'name' => $user->first_name . ' ' . $user->last_name,  // Full name for display
+                    'name' => $user->first_name . ' ' . $user->last_name,
                 ];
             }
         }
 
         return $merchants;
     }
-
-
 
     function getCurrenyName($id)
     {
