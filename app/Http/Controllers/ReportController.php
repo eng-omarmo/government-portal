@@ -45,6 +45,7 @@ class ReportController extends Controller
         $query = DB::table('merchant_payments')
             ->join('merchants', 'merchants.id', '=', 'merchant_payments.merchant_id')
             ->leftJoin('users', 'users.id', '=', 'merchant_payments.user_id')
+            ->where('merchant_payments.merchant_id', $this->returnMerchantCode()->id)
             ->select(
                 'merchant_payments.*',
                 'merchants.business_name as merchant_name',
@@ -74,8 +75,6 @@ class ReportController extends Controller
         if ($request->filled('currency')) {
             $query->where('merchant_payments.currency_id', $request->currency);
         }
-
-        $query->where('merchant_payments.vat_charges', '>', 0);
 
         return $query;
     }
@@ -149,7 +148,7 @@ class ReportController extends Controller
 
             $users_ids = DB::table('merchants')
             ->whereIn('id', $merchantIds)
-            ->where('vat', '>', 0) // Corrected the syntax here
+            ->where('vat', '>', 0)
             ->distinct()
             ->pluck('user_id');
 
@@ -175,5 +174,17 @@ class ReportController extends Controller
     function getCurrenyName($id)
     {
         return DB::table('currencies')->where('id', $id)->value('name');
+    }
+
+    function returnMerchantCode() {
+        $merchantCodeService = new merchantCodeService();
+        $merchant = $merchantCodeService->getMerchantCode();
+
+        if (!$merchant || empty($merchant)) {
+            $title = 'Merchant not found';
+            $message = 'Please contact somxchange techical sopport team to resolve this issue ' . env('TechicalSopportNumber');
+            return view('report.404', compact('title', 'message'));
+        }
+        return $merchant;
     }
 }
