@@ -8,7 +8,7 @@ class merchantCodeService
 {
     public function getMerchantCode()
     {
-        $merchantCode = env('MERCHANT_CODE');
+        $merchantCode = env('merchant_code');
         return  DB::table('merchants')->where('merchant_uuid', $merchantCode)->first();
     }
 }
