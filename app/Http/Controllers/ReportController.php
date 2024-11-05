@@ -8,6 +8,8 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Response;
 
+use function Laravel\Prompts\select;
+
 class ReportController extends Controller
 {
     public $merchantCodeService;
@@ -17,6 +19,7 @@ class ReportController extends Controller
     }
     public function index(Request $request)
     {
+
         $merchant = $this->merchantCodeService->getMerchantCode();
 
         if (!$merchant || empty($merchant)) {
@@ -65,7 +68,7 @@ class ReportController extends Controller
         }
 
         if ($request->filled('cashier')) {
-            $query->where('merchant_payments.merchant_id', $request->cashier);
+            $query->where('merchant_payments.user_id', $request->cashier);
         }
 
         if ($request->filled('status')) {
@@ -142,13 +145,9 @@ class ReportController extends Controller
 
     function getMerchantUuid()
     {
-        $merchantIds = DB::table('merchant_payments')
-            ->distinct()
-            ->pluck('merchant_id');
-
-            $users_ids = DB::table('merchants')
-            ->whereIn('id', $merchantIds)
-            ->where('vat', '>', 0)
+        $merchant = $this->returnMerchantCode();
+        $users_ids = DB::table('merchant_payments')
+            ->where('merchant_id', $merchant->id)
             ->distinct()
             ->pluck('user_id');
 
@@ -162,7 +161,7 @@ class ReportController extends Controller
             $merchant = DB::table('merchants')->where('user_id', $user->id)->first();
             if ($merchant) {
                 $merchants[] = [
-                    'id' => $merchant->id,
+                    'id' => $user->id,
                     'name' => $user->first_name . ' ' . $user->last_name,
                 ];
             }
@@ -176,7 +175,8 @@ class ReportController extends Controller
         return DB::table('currencies')->where('id', $id)->value('name');
     }
 
-    function returnMerchantCode() {
+    function returnMerchantCode()
+    {
         $merchantCodeService = new merchantCodeService();
         $merchant = $merchantCodeService->getMerchantCode();
 
