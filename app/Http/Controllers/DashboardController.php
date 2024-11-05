@@ -14,6 +14,7 @@ class DashboardController extends Controller
     }
     public function index()
     {
+ 
         $merchantPaymentCount = $this->getAllMerchantPaymentsCount();
         $recentTransactions = $this->recentTransactions();
         $vatRevenue = $this->calculateVatRevenue();
@@ -46,7 +47,6 @@ class DashboardController extends Controller
                     ')
 
             )
-            ->where('merchant_payments.vat_charges', '>', 0,)
             ->whereDate('merchant_payments.created_at', '=', now()->toDateString())
             ->latest('merchant_payments.created_at')
             ->take(10)
