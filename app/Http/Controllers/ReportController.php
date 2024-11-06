@@ -19,11 +19,7 @@ class ReportController extends Controller
     }
     public function index(Request $request)
     {
-
         $merchant = $this->merchantCodeService->getMerchantCode();
-
-    
-
         if (!$merchant || empty($merchant)) {
             $title = 'Merchant not found';
             $message = 'Please contact somxchange techical sopport team to resolve this issue ' . env('TechicalSopportNumber');
