@@ -87,7 +87,7 @@
                                         <td class="px-4 py-2 text-sm text-gray-900 dark:text-gray-100">{{ $transaction->sender }}</td>
                                         <td class="px-4 py-2 text-sm text-gray-900 dark:text-gray-100">{{ $transaction->merchant_name .' - '.$transaction->merchant_number }}</td>
                                         <td class="px-4 py-2 text-sm text-gray-900 dark:text-gray-100">{{ $transaction->total }}</td>
-                                        <td class="px-4 py-2 text-sm text-gray-900 dark:text-gray-100">{{ $transaction->vat_charges }}</td>
+                       
                                         <td class="px-4 py-2 text-sm text-gray-900 dark:text-gray-100">{{ $transaction->status }}</td>
                                         <td class="px-4 py-2 text-sm text-gray-900 dark:text-gray-100">{{ $transaction->balance }}</td>
                                     </tr>

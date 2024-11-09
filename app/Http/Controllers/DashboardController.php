@@ -9,8 +9,9 @@ use Illuminate\Support\Facades\DB;
 class DashboardController extends Controller
 {
     public $merchantCodeService;
-    public function __construct(merchantCodeService $merchantCodeService) {
-      $this->merchantCodeService = $merchantCodeService;
+    public function __construct(merchantCodeService $merchantCodeService)
+    {
+        $this->merchantCodeService = $merchantCodeService;
     }
     public function index()
     {
@@ -66,21 +67,22 @@ class DashboardController extends Controller
     protected function calculateVatRevenue()
     {
         return DB::table('merchant_payments')
-        ->where('merchant_id', $this->returnMerchantCode()->id)
-        ->whereDate('created_at', '=', now()->toDateString())
-        ->sum('amount');
+            ->where('merchant_id', $this->returnMerchantCode()->id)
+            ->whereDate('created_at', '=', now()->toDateString())
+            ->sum('amount');
     }
 
     protected function getNumberOfMerchants()
     {
         return DB::table('merchant_payments')
-            ->where('vat_charges', '>', '0')
+            ->where('merchant_id', $this->returnMerchantCode()->id)
             ->whereDate('created_at', '=', now()->toDateString())
-            ->distinct('user_id')
+            ->distinct()
             ->count('user_id');
     }
 
-    function returnMerchantCode() {
+    function returnMerchantCode()
+    {
         $merchantCodeService = new merchantCodeService();
         $merchant = $merchantCodeService->getMerchantCode();
 
