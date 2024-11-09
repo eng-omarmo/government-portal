@@ -69,10 +69,6 @@ class ReportController extends Controller
             $query->where('merchant_payments.user_id', $request->cashier);
         }
 
-        if ($request->filled('status')) {
-            $query->where('merchant_payments.status', $request->status);
-        }
-
         if ($request->filled('currency')) {
             $query->where('merchant_payments.currency_id', $request->currency);
         }
