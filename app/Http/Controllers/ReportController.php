@@ -93,12 +93,11 @@ class ReportController extends Controller
             'Content-Disposition' => "attachment; filename=\"$filename\"",
         ];
         $columns = [
-            'ID',
+            'Transaction ID',
             'Merchant',
             'Amount',
             'Status',
             'Sender',
-            'VAT Charges',
             'Date'
         ];
         $callback = function () use ($transactions, $columns) {
@@ -111,7 +110,6 @@ class ReportController extends Controller
                     $transaction->amount . ' ' . $this->getCurrenyName($transaction->currency_id),
                     $transaction->status,
                     $transaction->sender,
-                    $transaction->vat_charges,
                     $transaction->created_at,
                 ]);
             }
